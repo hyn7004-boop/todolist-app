@@ -122,7 +122,8 @@ MVP 1차 출시에서 아래 기능은 제공하지 않는다.
 | DB 연동 | pg (node-postgres) | 8.x | PostgreSQL 쿼리 (필수 사용) |
 | 인증 | jsonwebtoken | 9.x | JWT 발급 및 검증 |
 | 비밀번호 해시 | bcrypt | 5.x | 비밀번호 bcrypt 해시 처리 |
-| 언어 | TypeScript 또는 JavaScript | - | 선택 적용 가능 |
+| API 문서 | swagger-ui-express | 5.x | Swagger UI 서빙 (비운영 환경 한정, `/api-docs`) |
+| 언어 | JavaScript | - | Node.js 22 LTS 기준 CommonJS |
 
 > 주의: PostgreSQL 연동 라이브러리는 반드시 `pg`를 사용한다. ORM(Sequelize, Prisma 등) 사용 불가.
 

@@ -554,15 +554,16 @@ DB_PASSWORD=your_password_here
 
 # pg Connection Pool
 DB_POOL_MAX=10
-DB_POOL_IDLE_TIMEOUT=30000
-DB_POOL_CONNECTION_TIMEOUT=5000
+DB_IDLE_TIMEOUT=30000
+DB_CONNECTION_TIMEOUT=5000
 
 # JWT
 JWT_SECRET=your_jwt_secret_here_minimum_32_characters
 JWT_EXPIRES_IN=24h
 
 # CORS (콤마 구분 허용 오리진)
-CORS_ALLOWED_ORIGINS=http://localhost:5173
+# 개발 환경: FE Vite 포트(5173) + Swagger UI 포트(3000) 포함
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
 
 **frontend/.env.example:**
@@ -655,8 +656,9 @@ module.exports = pool;
 **상세 설명:**
 
 개발 환경:
-- 허용 오리진: `http://localhost:5173` (Vite 기본 포트)
+- 허용 오리진: `http://localhost:5173` (Vite 기본 포트), `http://localhost:3000` (Swagger UI 접근 용도)
 - `CORS_ALLOWED_ORIGINS` 환경 변수로 관리하여 하드코딩 금지
+- Swagger UI는 `http://localhost:3000/api-docs`로 노출되며 비운영 환경(`NODE_ENV !== 'production'`)에서만 활성화
 
 운영 환경:
 - 허용 오리진: 실제 FE 배포 도메인만 명시 (`https://todolist.example.com`)
@@ -818,9 +820,19 @@ backend/
 │   ├── 001_create_tables.sql         # users, categories, todos 테이블 DDL
 │   └── 002_create_indexes.sql        # 인덱스 생성 DDL (UNIQUE INDEX, INDEX)
 │
-├── tests/                            # Jest 단위 테스트 (핵심 utils 대상)
+├── tests/                            # Jest 테스트 (supertest 기반 통합 + 단위)
 │   ├── dateUtils.test.js             # KST 날짜 검증 경계값 테스트
-│   └── validators.test.js            # 비밀번호 정책 검증 테스트
+│   ├── validators.test.js            # 비밀번호 정책 검증 테스트
+│   ├── passwordUtils.test.js         # bcrypt hash/compare 테스트
+│   ├── responseHelper.test.js        # ok/fail 응답 헬퍼 테스트
+│   ├── config.test.js                # 환경 변수 설정 모듈 테스트
+│   ├── app.test.js                   # Express 앱 초기화 및 헬스체크 테스트
+│   ├── authMiddleware.test.js        # JWT 인증 미들웨어 테스트
+│   ├── auth.test.js                  # 인증 API (signup/login/logout) 테스트
+│   ├── user.test.js                  # 사용자 API (PATCH/DELETE /users/me) 테스트
+│   ├── category.test.js              # 카테고리 API 테스트
+│   ├── todo.test.js                  # 할일 API 테스트
+│   └── integration.test.js          # UC-01~UC-12 전체 흐름 통합 테스트
 │
 ├── .env                              # 실제 환경 변수 (gitignore 대상)
 ├── .env.example                      # 환경 변수 키 목록 예시 (git 커밋 대상)
@@ -856,16 +868,36 @@ module.exports = router;
 `src/app.js`:
 ```javascript
 const express = require('express');
+const morgan = require('morgan');
+const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require(path.join(__dirname, '../../swagger/swagger.json'));
 const corsMiddleware = require('./middleware/cors');
 const apiRouter = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(corsMiddleware);
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use(express.json({ limit: '10kb' }));
-app.use('/api/v1', apiRouter);
-app.use(errorHandler);
+app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
+// 헬스체크
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
+// Swagger UI (비운영 환경 한정)
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
+app.use('/api/v1', apiRouter);
+
+// 404 핸들러
+app.use((req, res) => {
+  res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: '요청하신 리소스를 찾을 수 없습니다.' } });
+});
+
+app.use(errorHandler);
 module.exports = app;
 ```
 

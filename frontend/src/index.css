@@ -1,0 +1,42 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-bg: #ffffff;
+  --color-bg-sub: #F9FAFB;
+  --color-border: #E5E7EB;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #9CA3AF;
+  --color-nav-active-bg: #DBEAFE;
+  --color-nav-active-text: #1D4ED8;
+  --color-nav-text: #4B5563;
+  --color-input-bg: #ffffff;
+  --color-hover: #F3F4F6;
+}
+
+.dark {
+  --color-bg: #111827;
+  --color-bg-sub: #1F2937;
+  --color-border: #374151;
+  --color-text-primary: #F9FAFB;
+  --color-text-secondary: #D1D5DB;
+  --color-text-muted: #6B7280;
+  --color-nav-active-bg: #1e3a5f;
+  --color-nav-active-text: #93C5FD;
+  --color-nav-text: #9CA3AF;
+  --color-input-bg: #1F2937;
+  --color-hover: #374151;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes toast-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
