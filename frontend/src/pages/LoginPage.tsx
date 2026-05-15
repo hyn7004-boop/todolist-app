@@ -57,7 +57,7 @@ export function LoginPage() {
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-2">
             <CheckSquare size={32} strokeWidth={1.5} style={{ color: '#2563EB' }} />
-            <span className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>TodoListApp</span>
+            <span className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>할일목록 관리</span>
           </div>
           <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('auth.loginSubtitle')}</p>
         </div>
