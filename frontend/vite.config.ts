@@ -18,7 +18,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts', './src/test/i18n-setup.ts'],
     coverage: {
       provider: 'v8',
-      threshold: { lines: 80 },
+      thresholds: { lines: 80 },
     },
   },
 });
