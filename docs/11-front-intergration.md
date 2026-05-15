@@ -7,11 +7,18 @@
 | 항목 | 내용 |
 |------|------|
 | 문서명 | TodoListApp 프론트엔드 통합 가이드 |
-| 버전 | 1.0.0 |
-| 작성일 | 2026-05-14 |
+| 버전 | 1.1.0 |
+| 작성일 | 2026-05-15 |
 | 작성자 | youngnam.her |
 | 상태 | Draft |
 | 참조 문서 | docs/4-prd.md, docs/6-project-principle.md, docs/9-execution-plan.md, swagger/swagger.json |
+
+### Changelog
+
+| 버전 | 날짜 | 작성자 | 변경 내용 |
+|------|------|--------|-----------|
+| 1.1.0 | 2026-05-15 | youngnam.her | 에러 코드 `TODO_ALREADY_COMPLETED` 추가; due_date 형식(ISO datetime → YYYY-MM-DD) 주의사항 추가; 배포 URL 정보 추가 |
+| 1.0.0 | 2026-05-14 | youngnam.her | 최초 작성 (BE API 완성 기반) |
 
 ---
 
@@ -21,12 +28,12 @@
 
 ### 1.1 백엔드 API 서버 정보
 
-| 항목 | 값 |
-|------|-----|
-| 로컬 서버 URL | `http://localhost:3000` |
-| API Base URL | `http://localhost:3000/api/v1` |
-| Swagger UI | `http://localhost:3000/api-docs` (비운영 환경 한정) |
-| 헬스체크 | `GET http://localhost:3000/health` |
+| 항목 | 로컬 개발 | 프로덕션 |
+|------|---------|---------|
+| 서버 URL | `http://localhost:3000` | `https://ynher-be.vercel.app` |
+| API Base URL | `http://localhost:3000/api/v1` | `https://ynher-be.vercel.app/api/v1` |
+| Swagger UI | `http://localhost:3000/api-docs` | 비운영 환경에만 제공 |
+| 헬스체크 | `GET http://localhost:3000/health` | `GET https://ynher-be.vercel.app/health` |
 
 ### 1.2 FE 기술 스택
 
@@ -333,6 +340,7 @@ export const ERROR_CODES = {
   INVALID_TITLE: 'INVALID_TITLE',
   INVALID_CATEGORY: 'INVALID_CATEGORY',
   TODO_NOT_FOUND: 'TODO_NOT_FOUND',
+  TODO_ALREADY_COMPLETED: 'TODO_ALREADY_COMPLETED',
   INVALID_DATE_FORMAT: 'INVALID_DATE_FORMAT',
   INVALID_DATE_RANGE: 'INVALID_DATE_RANGE',
   // 서버
@@ -572,11 +580,19 @@ PATCH /api/v1/todos/:todoId
 Header: Authorization: Bearer <token>
 Body: { title?, category_id?, due_date?, description? }  // 변경할 필드만 포함
 200: { success: true, data: { ...수정된 todo 전체 } }
-400: INVALID_DUE_DATE | INVALID_TITLE
+400: INVALID_DUE_DATE | INVALID_TITLE | TODO_ALREADY_COMPLETED
 404: TODO_NOT_FOUND
 ```
 
-> `description: null` 전달 시 설명이 삭제된다.
+> - `description: null` 전달 시 설명이 삭제된다.
+> - **주의:** `is_completed === true`인 할일은 수정 불가 (HTTP 400 `TODO_ALREADY_COMPLETED`).
+> - 프론트엔드에서 완료된 할일의 edit 페이지 진입 시 토스트 메시지를 표시하고 목록으로 리다이렉트하는 것을 권장한다.
+
+**due_date 형식 주의사항:**
+
+> PostgreSQL에서 DATE 컬럼은 ISO datetime 문자열(`"2026-05-16T00:00:00.000Z"`)로 반환될 수 있다.
+> 프론트엔드에서는 `.slice(0, 10)` 또는 `split('T')[0]`로 `YYYY-MM-DD` 형식으로 정규화하여 사용한다.
+> 예: `"2026-05-16T00:00:00.000Z"` → `"2026-05-16"`
 
 **UC-10 할일 삭제**
 
@@ -826,6 +842,7 @@ const handleSubmit = async (data: CreateTodoRequest) => {
 ### 8.5 할일 수정 화면 (`/todos/:id/edit`)
 
 - URL에서 `todoId`를 추출하여 기존 값을 폼에 사전 입력한다.
+- **완료된 할일(is_completed=true)인 경우:** 화면 진입 시 `400 TODO_ALREADY_COMPLETED` 에러를 감지하여 토스트 메시지 표시 후 목록으로 리다이렉트.
 - 변경된 필드만 포함하여 PATCH 요청을 보낸다.
 - 서버가 `404 TODO_NOT_FOUND` 반환 시 목록으로 이동 + 안내 메시지.
 
@@ -833,8 +850,15 @@ const handleSubmit = async (data: CreateTodoRequest) => {
 const updateTodo = useUpdateTodo();
 
 const handleSubmit = async (data: UpdateTodoRequest) => {
-  await updateTodo.mutateAsync({ todoId, data });
-  navigate('/todos');
+  try {
+    await updateTodo.mutateAsync({ todoId, data });
+    navigate('/todos');
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.data?.error?.code === 'TODO_ALREADY_COMPLETED') {
+      toast.error('완료된 할일은 수정할 수 없습니다.');
+      navigate('/todos');
+    }
+  }
 };
 ```
 

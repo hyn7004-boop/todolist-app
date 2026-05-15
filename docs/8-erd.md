@@ -1,5 +1,16 @@
 # ERD
 
+## 환경별 배포 정보
+
+| 항목 | 로컬 개발 | 프로덕션 |
+|------|---------|---------|
+| DB 호스트 | `localhost:5432` | `aws-1-ap-northeast-2.pooler.supabase.com:6543` |
+| DB명 | `todolist_db` | `postgres` |
+| 리전 | - | `ap-northeast-2` (Supabase Seoul) |
+| 상태 | ✅ 완료 | ✅ 마이그레이션 완료 |
+
+---
+
 ```mermaid
 erDiagram
     USERS ||--o{ CATEGORIES : owns

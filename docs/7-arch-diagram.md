@@ -8,7 +8,7 @@ graph TB
         Browser["웹 브라우저<br/>(React 19 + TypeScript)"]
     end
 
-    subgraph Frontend["프론트엔드"]
+    subgraph Frontend["프론트엔드 (Vercel)"]
         Pages["Pages<br/>(라우팅)"]
         Components["Components<br/>(UI 컴포넌트)"]
         Hooks["Hooks<br/>(TanStack Query)"]
@@ -19,15 +19,15 @@ graph TB
         HTTPS["HTTPS/TLS 1.2+<br/>(Bearer JWT)"]
     end
 
-    subgraph Backend["백엔드"]
+    subgraph Backend["백엔드 (Vercel)"]
         Router["Router"]
         Controller["Controller<br/>(요청 파싱)"]
         Service["Service<br/>(비즈니스 로직)"]
         Repository["Repository<br/>(DB 쿼리)"]
     end
 
-    subgraph Database["데이터 계층"]
-        PostgreSQL["PostgreSQL 17<br/>(users, categories, todos)"]
+    subgraph Database["데이터 계층 (Supabase)"]
+        PostgreSQL["PostgreSQL 17<br/>(ap-northeast-2)<br/>(users, categories, todos)"]
     end
 
     Browser -->|API 호출| Pages

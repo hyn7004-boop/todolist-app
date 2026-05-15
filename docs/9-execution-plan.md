@@ -7,11 +7,18 @@
 | 항목      | 내용                                                                                                           |
 | --------- | -------------------------------------------------------------------------------------------------------------- |
 | 문서명    | TodoListApp 실행계획                                                                                           |
-| 버전      | 1.0.0                                                                                                          |
-| 작성일    | 2026-05-13                                                                                                     |
+| 버전      | 1.1.0                                                                                                          |
+| 작성일    | 2026-05-15                                                                                                     |
 | 작성자    | youngnam.her                                                                                                   |
 | 상태      | Draft                                                                                                          |
 | 참조 문서 | docs/3-domain-definition.md, docs/4-prd.md, docs/6-project-principle.md, docs/7-arch-diagram.md, docs/8-erd.md |
+
+### Changelog
+
+| 버전 | 날짜 | 작성자 | 변경 내용 |
+|------|------|--------|-----------|
+| 1.1.0 | 2026-05-15 | youngnam.her | 모든 Task 완료 체크; 배포 완료 반영; BUG-001 수정 및 신규 기능(완료된 할일 수정 불가) 추가 |
+| 1.0.0 | 2026-05-13 | youngnam.her | 최초 작성 (3일 일정 기반) |
 
 ---
 
@@ -237,6 +244,7 @@
   - [x] DUPLICATE_CATEGORY_NAME, NAME_TOO_LONG, DEFAULT_CATEGORY_NOT_DELETABLE
   - [x] CATEGORY_HAS_TODOS, CATEGORY_NOT_FOUND
   - [x] INVALID_DUE_DATE, INVALID_TITLE, INVALID_CATEGORY, TODO_NOT_FOUND
+  - [x] TODO_ALREADY_COMPLETED (신규: 완료된 할일 수정 불가)
   - [x] INVALID_DATE_FORMAT, INVALID_DATE_RANGE, INTERNAL_SERVER_ERROR
 - [x] `src/utils/responseHelper.js` 작성 완료
   - [x] `ok(res, data, status = 200)` 함수 구현
@@ -466,6 +474,7 @@
     - [x] 카테고리 소유권 및 유효성 확인 (BR-02)
   - [x] `updateTodo(userId, todoId, fields)` 구현
     - [x] 소유권 확인 (404, BR-02)
+    - [x] **완료된 할일(is_completed=true) 수정 불가 (400 TODO_ALREADY_COMPLETED, BR-11)**
     - [x] due_date 변경 시 KST 기준 유효성 검증 (BR-07)
     - [x] 카테고리 변경 시 소유권 확인
   - [x] `deleteTodo(userId, todoId)` 구현 (소유권 확인 후 삭제)
@@ -559,7 +568,7 @@
 - [x] UC-06 카테고리 추가 정상/이름 중복 검증 완료
 - [x] UC-07 카테고리 삭제 정상/기본 카테고리/연결된 할일 검증 완료
 - [x] UC-08 할일 등록 정상/과거 날짜/제목 미입력 검증 완료
-- [x] UC-09 할일 수정 정상/타인 소유 접근 검증 완료
+- [x] UC-09 할일 수정 정상/타인 소유 접근/완료된 할일 수정 불가 검증 완료
 - [x] UC-10 할일 삭제 정상 검증 완료
 - [x] UC-11 완료 토글 정상/완료 취소 검증 완료
 - [x] UC-12 필터 없음/단일 필터/복합 필터/결과 없음 검증 완료
@@ -976,7 +985,7 @@
 - [x] FE-06: 인증 화면 구현 (UC-01, UC-02, UC-03)
 - [x] FE-07: 서버 상태 훅 구현 (TanStack Query)
 - [x] FE-08: 할일 목록 화면 구현 (UC-12, UC-11, UC-10)
-- [x] FE-09: 할일 등록/수정 화면 구현 (UC-08, UC-09)
+- [x] FE-09: 할일 등록/수정 화면 구현 (UC-08, UC-09) — 완료된 할일 진입 시 토스트 + 리다이렉트 구현
 - [x] FE-10: 카테고리 관리 화면 구현 (UC-06, UC-07)
 - [x] FE-11: 내 정보/회원 탈퇴 화면 구현 (UC-04, UC-05)
 - [x] FE-12: 에러 처리 UX 구현
