@@ -29,7 +29,7 @@ async function updateMe(userId, { name, currentPassword, newPassword }) {
 
     const isMatch = await compare(currentPassword, user.password_hash);
     if (!isMatch) {
-      throw buildError('현재 비밀번호가 올바르지 않습니다.', ERROR_CODES.WRONG_CURRENT_PASSWORD, 401);
+      throw buildError('현재 비밀번호가 올바르지 않습니다.', ERROR_CODES.WRONG_CURRENT_PASSWORD, 400);
     }
 
     if (!isValidPassword(newPassword)) {
