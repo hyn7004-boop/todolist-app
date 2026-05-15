@@ -80,6 +80,7 @@
     "dueDateInvalid": "마감일은 오늘 이후여야 합니다.",
     "dateRangeError": "시작일은 종료일보다 이전이어야 합니다.",
     "notFound": "할일을 찾을 수 없습니다.",
+    "alreadyCompleted": "완료된 할일은 수정할 수 없습니다.",
     "completeLabel": "{{title}} 완료 여부",
     "createButton": "등록",
     "updateButton": "수정"

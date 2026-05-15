@@ -80,6 +80,7 @@
     "dueDateInvalid": "Due date must be today or later.",
     "dateRangeError": "Start date must be before end date.",
     "notFound": "Todo not found.",
+    "alreadyCompleted": "Completed todos cannot be edited.",
     "completeLabel": "{{title}} completion status",
     "createButton": "Create",
     "updateButton": "Update"

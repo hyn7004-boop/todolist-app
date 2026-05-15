@@ -7,6 +7,7 @@ import { useTodo } from '../hooks/useTodo';
 import { useUpdateTodo } from '../hooks/useUpdateTodo';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useToastStore } from '../stores/toastStore';
+import { ERROR_CODES } from '../constants/errorCodes';
 import type { CreateTodoRequest } from '../types/todo.types';
 
 export default function TodoEditPage() {
@@ -26,6 +27,14 @@ export default function TodoEditPage() {
     }
   }, [isError, navigate, t]);
 
+  useEffect(() => {
+    if (todo?.is_completed && !handledRef.current) {
+      handledRef.current = true;
+      useToastStore.getState().show(t('todo.alreadyCompleted'), 'error');
+      navigate('/todos');
+    }
+  }, [todo, navigate, t]);
+
   const handleSubmit = (data: CreateTodoRequest) => {
     if (!id) return;
     setServerError('');
@@ -36,8 +45,15 @@ export default function TodoEditPage() {
           navigate('/todos');
         },
         onError: (error) => {
-          if (axios.isAxiosError(error) && error.response?.data?.message) {
-            setServerError(error.response.data.message);
+          if (axios.isAxiosError(error)) {
+            const code = error.response?.data?.error?.code;
+            if (code === ERROR_CODES.TODO_ALREADY_COMPLETED) {
+              setServerError(t('todo.alreadyCompleted'));
+            } else if (error.response?.data?.message) {
+              setServerError(error.response.data.message);
+            } else {
+              setServerError(t('common.error'));
+            }
           } else {
             setServerError(t('common.error'));
           }

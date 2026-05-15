@@ -80,6 +80,7 @@
     "dueDateInvalid": "截止日期必须是今天或之后。",
     "dateRangeError": "开始日期必须早于结束日期。",
     "notFound": "未找到待办事项。",
+    "alreadyCompleted": "已完成的待办事项无法编辑。",
     "completeLabel": "{{title}} 完成状态",
     "createButton": "创建",
     "updateButton": "更新"

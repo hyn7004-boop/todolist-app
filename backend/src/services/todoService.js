@@ -75,6 +75,13 @@ const updateTodo = async (userId, todoId, fields) => {
     throw error;
   }
 
+  if (todo.is_completed) {
+    const error = new Error('완료된 할일은 수정할 수 없습니다.');
+    error.code = ERROR_CODES.TODO_ALREADY_COMPLETED;
+    error.status = 400;
+    throw error;
+  }
+
   if (fields.title !== undefined) {
     if (fields.title.trim().length === 0 || fields.title.length > 200) {
       const error = new Error('제목은 1자 이상 200자 이내로 입력해 주세요.');
