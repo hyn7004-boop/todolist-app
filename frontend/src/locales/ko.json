@@ -86,7 +86,12 @@
   },
   "category": {
     "title": "카테고리 관리",
-    "namePlaceholder": "카테고리 이름을 입력하세요",
+    "nameKo": "한국어 이름",
+    "nameEn": "영어 이름 (선택)",
+    "nameZh": "중국어 이름 (선택)",
+    "namePlaceholder": "예: 업무",
+    "nameEnPlaceholder": "예: Work",
+    "nameZhPlaceholder": "예: 工作",
     "nameRequired": "카테고리 이름을 입력해 주세요.",
     "nameTooLong": "카테고리 이름은 50자 이내로 입력해 주세요.",
     "deleteConfirmTitle": "카테고리 삭제",
@@ -97,7 +102,12 @@
     "createSuccess": "카테고리가 추가되었습니다.",
     "duplicate": "이미 존재하는 카테고리 이름입니다.",
     "hasTodos": "할일이 등록된 카테고리는 삭제할 수 없습니다.",
-    "emptyState": "카테고리가 없습니다."
+    "emptyState": "카테고리가 없습니다.",
+    "defaults": {
+      "일반": "일반",
+      "업무": "업무",
+      "개인": "개인"
+    }
   },
   "settings": {
     "title": "내 정보",

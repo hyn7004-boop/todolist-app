@@ -5,11 +5,12 @@ import { Button } from '../common/Button';
 
 interface CategoryItemProps {
   category: Category;
+  displayName: string;
   onDelete: (id: string) => void;
   isDeleting: boolean;
 }
 
-export function CategoryItem({ category, onDelete, isDeleting }: CategoryItemProps) {
+export function CategoryItem({ category, displayName, onDelete, isDeleting }: CategoryItemProps) {
   const { t } = useTranslation();
 
   return (
@@ -21,7 +22,7 @@ export function CategoryItem({ category, onDelete, isDeleting }: CategoryItemPro
       }}
     >
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{category.name}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{displayName}</span>
         {category.is_default && (
           <span
             className="px-2 py-0.5 text-[11px] font-bold rounded"

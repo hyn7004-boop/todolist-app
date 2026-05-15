@@ -2,6 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { ListTodo, Tag, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Category } from '../../types/category.types';
+import { getCategoryName } from '../../utils/categoryUtils';
+import { useLanguage } from '../../hooks/useLanguage';
 
 const CATEGORY_COLORS = ['#2563EB', '#16A34A', '#7C3AED', '#0D9488', '#E11D48', '#D97706'];
 
@@ -19,6 +21,7 @@ const NAV_LINKS = [
 
 export function Sidebar({ categories = [], isOpen, onClose }: SidebarProps) {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
     display: 'flex',
@@ -47,7 +50,9 @@ export function Sidebar({ categories = [], isOpen, onClose }: SidebarProps) {
       )}
 
       <aside
-        className="fixed left-0 z-40 overflow-y-auto transition-transform duration-[250ms] ease-out lg:translate-x-0"
+        className={`fixed left-0 z-40 overflow-y-auto transition-transform duration-[250ms] ease-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
         style={{
           width: 250,
           top: 56,
@@ -55,7 +60,6 @@ export function Sidebar({ categories = [], isOpen, onClose }: SidebarProps) {
           background: 'var(--color-bg-sub)',
           borderRight: '1px solid var(--color-border)',
           padding: '24px 16px',
-          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         }}
       >
         {categories.length > 0 && (
@@ -82,7 +86,7 @@ export function Sidebar({ categories = [], isOpen, onClose }: SidebarProps) {
                         backgroundColor: CATEGORY_COLORS[index % CATEGORY_COLORS.length],
                       }}
                     />
-                    {cat.name}
+                    {getCategoryName(cat, currentLanguage)}
                   </div>
                 </li>
               ))}

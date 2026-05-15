@@ -11,9 +11,9 @@ async function getCategories(req, res, next) {
 }
 
 async function createCategory(req, res, next) {
-  const { name } = req.body;
+  const { name_ko, name_en, name_zh } = req.body;
   try {
-    const category = await categoryService.createCategory(req.user.user_id, name);
+    const category = await categoryService.createCategory(req.user.user_id, name_ko, name_en, name_zh);
     return ok(res, category, 201);
   } catch (err) {
     if (err.code && err.status) {

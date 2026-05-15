@@ -86,7 +86,12 @@
   },
   "category": {
     "title": "分类管理",
-    "namePlaceholder": "分类名称",
+    "nameKo": "韩语名称",
+    "nameEn": "英语名称（可选）",
+    "nameZh": "中文名称（可选）",
+    "namePlaceholder": "例: 업무",
+    "nameEnPlaceholder": "例: Work",
+    "nameZhPlaceholder": "例: 工作",
     "nameRequired": "请输入分类名称。",
     "nameTooLong": "分类名称不能超过50个字符。",
     "deleteConfirmTitle": "删除分类",
@@ -97,7 +102,12 @@
     "createSuccess": "分类已添加。",
     "duplicate": "已存在同名分类。",
     "hasTodos": "无法删除含有待办事项的分类。",
-    "emptyState": "暂无分类。"
+    "emptyState": "暂无分类。",
+    "defaults": {
+      "일반": "一般",
+      "업무": "工作",
+      "개인": "个人"
+    }
   },
   "settings": {
     "title": "我的信息",

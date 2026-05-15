@@ -7,16 +7,20 @@ import { CategoryItem } from '../components/category/CategoryItem';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useToastStore } from '../stores/toastStore';
 import { ERROR_CODES } from '../constants/errorCodes';
+import { useLanguage } from '../hooks/useLanguage';
+import { getCategoryName } from '../utils/categoryUtils';
+import type { CreateCategoryRequest } from '../types/category.types';
 
 export default function CategoryPage() {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const { data: categories, isLoading } = useCategories();
   const createMutation = useCreateCategory();
   const deleteMutation = useDeleteCategory();
   const toast = useToastStore((s) => s.show);
 
-  const handleCreateCategory = (name: string) => {
-    createMutation.mutate(name, {
+  const handleCreateCategory = (data: CreateCategoryRequest) => {
+    createMutation.mutate(data, {
       onSuccess: () => {
         toast(t('category.createSuccess'), 'success');
       },
@@ -69,6 +73,7 @@ export default function CategoryPage() {
           <CategoryItem
             key={category.category_id}
             category={category}
+            displayName={getCategoryName(category, currentLanguage)}
             onDelete={handleDeleteCategory}
             isDeleting={deleteMutation.isPending && deleteMutation.variables === category.category_id}
           />

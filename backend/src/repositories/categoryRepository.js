@@ -1,20 +1,24 @@
 const pool = require('../config/db');
 
-const DEFAULT_CATEGORIES = ['일반', '업무', '개인'];
+const DEFAULT_CATEGORIES = [
+  { name_ko: '일반', name_en: 'General', name_zh: '一般' },
+  { name_ko: '업무', name_en: 'Work',    name_zh: '工作' },
+  { name_ko: '개인', name_en: 'Personal',name_zh: '个人' },
+];
 
 async function createDefaults(client, userId) {
-  for (const name of DEFAULT_CATEGORIES) {
+  for (const cat of DEFAULT_CATEGORIES) {
     await client.query(
-      `INSERT INTO categories (user_id, name, is_default)
-       VALUES ($1, $2, true)`,
-      [userId, name]
+      `INSERT INTO categories (user_id, name, name_ko, name_en, name_zh, is_default)
+       VALUES ($1, $2, $2, $3, $4, true)`,
+      [userId, cat.name_ko, cat.name_en, cat.name_zh]
     );
   }
 }
 
 async function findAllByUserId(userId) {
   const { rows } = await pool.query(
-    `SELECT category_id, name, is_default, created_at
+    `SELECT category_id, name_ko, name_en, name_zh, is_default, created_at
      FROM categories WHERE user_id = $1
      ORDER BY created_at ASC`,
     [userId]
@@ -24,19 +28,19 @@ async function findAllByUserId(userId) {
 
 async function findById(categoryId, userId) {
   const { rows } = await pool.query(
-    `SELECT category_id, name, is_default, created_at
+    `SELECT category_id, name_ko, name_en, name_zh, is_default, created_at
      FROM categories WHERE category_id = $1 AND user_id = $2`,
     [categoryId, userId]
   );
   return rows[0] || null;
 }
 
-async function create(userId, name) {
+async function create(userId, name_ko, name_en, name_zh) {
   const { rows } = await pool.query(
-    `INSERT INTO categories (user_id, name, is_default)
-     VALUES ($1, $2, false)
-     RETURNING category_id, name, is_default, created_at`,
-    [userId, name]
+    `INSERT INTO categories (user_id, name, name_ko, name_en, name_zh, is_default)
+     VALUES ($1, $2, $2, $3, $4, false)
+     RETURNING category_id, name_ko, name_en, name_zh, is_default, created_at`,
+    [userId, name_ko, name_en || null, name_zh || null]
   );
   return rows[0];
 }

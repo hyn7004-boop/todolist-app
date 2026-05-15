@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DatePicker } from '../common/DatePicker';
 import type { Category } from '../../types/category.types';
 import type { TodoFilter as TodoFilterType } from '../../types/todo.types';
+import { getCategoryName } from '../../utils/categoryUtils';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface TodoFilterProps {
   filters: TodoFilterType;
@@ -11,6 +14,7 @@ interface TodoFilterProps {
 
 export function TodoFilter({ filters, categories, onChange }: TodoFilterProps) {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [local, setLocal] = useState<TodoFilterType>(filters);
   const [dateError, setDateError] = useState('');
 
@@ -69,7 +73,7 @@ export function TodoFilter({ filters, categories, onChange }: TodoFilterProps) {
             <option value="">{t('todo.selectCategory')}</option>
             {categories.map((cat) => (
               <option key={cat.category_id} value={cat.category_id}>
-                {cat.name}
+                {getCategoryName(cat, currentLanguage)}
               </option>
             ))}
           </select>
@@ -79,13 +83,12 @@ export function TodoFilter({ filters, categories, onChange }: TodoFilterProps) {
           <label htmlFor="filter-date-from" className="text-[13px] font-medium" style={{ color: 'var(--color-text-secondary)' }}>
             {t('todo.dateFrom')}
           </label>
-          <input
+          <DatePicker
             id="filter-date-from"
-            type="date"
+            value={local.due_date_from ?? ''}
+            onChange={(v) => update({ due_date_from: v || undefined })}
             className={inputClass}
             style={inputStyle}
-            value={local.due_date_from ?? ''}
-            onChange={(e) => update({ due_date_from: e.target.value || undefined })}
           />
         </div>
 
@@ -93,13 +96,12 @@ export function TodoFilter({ filters, categories, onChange }: TodoFilterProps) {
           <label htmlFor="filter-date-to" className="text-[13px] font-medium" style={{ color: 'var(--color-text-secondary)' }}>
             {t('todo.dateTo')}
           </label>
-          <input
+          <DatePicker
             id="filter-date-to"
-            type="date"
+            value={local.due_date_to ?? ''}
+            onChange={(v) => update({ due_date_to: v || undefined })}
             className={inputClass}
             style={inputStyle}
-            value={local.due_date_to ?? ''}
-            onChange={(e) => update({ due_date_to: e.target.value || undefined })}
           />
         </div>
 

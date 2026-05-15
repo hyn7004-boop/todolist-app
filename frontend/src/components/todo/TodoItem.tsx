@@ -4,6 +4,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useToggleTodo } from '../../hooks/useToggleTodo';
 import { useToastStore } from '../../stores/toastStore';
+import { useLanguage } from '../../hooks/useLanguage';
+import { getCategoryName } from '../../utils/categoryUtils';
 import type { Todo } from '../../types/todo.types';
 import type { Category } from '../../types/category.types';
 
@@ -25,6 +27,7 @@ interface TodoItemProps {
 export function TodoItem({ todo, categories, onDelete }: TodoItemProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const { mutate: toggle, isPending: toggling } = useToggleTodo();
 
   const [isCompleted, setIsCompleted] = useState(todo.is_completed);
@@ -37,7 +40,8 @@ export function TodoItem({ todo, categories, onDelete }: TodoItemProps) {
 
   const categoryIndex = categories.findIndex((c) => c.category_id === todo.category_id);
   const badgeStyle = BADGE_STYLES[categoryIndex % BADGE_STYLES.length] ?? BADGE_STYLES[0];
-  const categoryName = categoryIndex >= 0 ? categories[categoryIndex].name : '';
+  const foundCategory = categoryIndex >= 0 ? categories[categoryIndex] : null;
+  const categoryName = foundCategory ? getCategoryName(foundCategory, currentLanguage) : '';
 
   const handleToggle = () => {
     const next = !isCompleted;

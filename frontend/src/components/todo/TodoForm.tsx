@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../common/Input';
+import { DatePicker } from '../common/DatePicker';
 import { Button } from '../common/Button';
 import { Select } from '../common/Select';
 import { useCategories } from '../../hooks/useCategories';
 import { getTodayKST, isValidDueDate } from '../../utils/dateUtils';
 import { isNotEmpty, isMaxLength } from '../../utils/validators';
+import { getCategoryName } from '../../utils/categoryUtils';
+import { useLanguage } from '../../hooks/useLanguage';
 import type { CreateTodoRequest, Todo } from '../../types/todo.types';
 
 interface TodoFormProps {
@@ -18,6 +21,7 @@ interface TodoFormProps {
 
 export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, serverError }: TodoFormProps) {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const { data: categories = [], isLoading: isCategoriesLoading } = useCategories();
 
   const [formData, setFormData] = useState<CreateTodoRequest>({
@@ -78,7 +82,7 @@ export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, s
 
   const categoryOptions = categories.map((cat) => ({
     value: cat.category_id,
-    label: cat.name,
+    label: getCategoryName(cat, currentLanguage),
   }));
 
   return (
@@ -113,15 +117,24 @@ export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, s
         required
       />
 
-      <Input
-        label={t('todo.dueDate')}
-        type="date"
-        value={formData.due_date}
-        onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-        errorMessage={errors.due_date}
-        data-testid="due-date-input"
-        required
-      />
+      <div className="flex flex-col gap-1">
+        <label className="text-[13px] font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+          {t('todo.dueDate')}
+        </label>
+        <DatePicker
+          value={formData.due_date}
+          onChange={(v) => setFormData({ ...formData, due_date: v })}
+          className="w-full h-10 px-3 py-2 border rounded-[6px] text-sm outline-none transition-all duration-150"
+          style={{
+            backgroundColor: 'var(--color-input-bg)',
+            borderColor: errors.due_date ? '#DC2626' : 'var(--color-border)',
+            color: 'var(--color-text-primary)',
+          }}
+        />
+        {errors.due_date && (
+          <p role="alert" className="text-xs" style={{ color: '#DC2626' }}>{errors.due_date}</p>
+        )}
+      </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-[13px] font-medium text-gray-700">{t('todo.description')}</label>

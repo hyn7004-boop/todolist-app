@@ -86,7 +86,12 @@
   },
   "category": {
     "title": "Category Management",
-    "namePlaceholder": "Category name",
+    "nameKo": "Korean Name",
+    "nameEn": "English Name (optional)",
+    "nameZh": "Chinese Name (optional)",
+    "namePlaceholder": "e.g. 업무",
+    "nameEnPlaceholder": "e.g. Work",
+    "nameZhPlaceholder": "e.g. 工作",
     "nameRequired": "Please enter a category name.",
     "nameTooLong": "Category name must be 50 characters or less.",
     "deleteConfirmTitle": "Delete Category",
@@ -97,7 +102,12 @@
     "createSuccess": "Category added successfully.",
     "duplicate": "A category with this name already exists.",
     "hasTodos": "Cannot delete a category that has todos.",
-    "emptyState": "No categories found."
+    "emptyState": "No categories found.",
+    "defaults": {
+      "일반": "General",
+      "업무": "Work",
+      "개인": "Personal"
+    }
   },
   "settings": {
     "title": "My Info",

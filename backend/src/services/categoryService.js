@@ -12,18 +12,23 @@ async function getCategories(userId) {
   return categoryRepository.findAllByUserId(userId);
 }
 
-async function createCategory(userId, name) {
-  if (!name) {
+async function createCategory(userId, name_ko, name_en, name_zh) {
+  if (!name_ko) {
     throw buildError('필수 입력값이 누락되었습니다.', ERROR_CODES.MISSING_REQUIRED_FIELD, 400);
   }
-  if (typeof name !== 'string' || name.length > 50) {
+  if (typeof name_ko !== 'string' || name_ko.length > 50) {
+    throw buildError('카테고리 이름은 50자를 초과할 수 없습니다.', ERROR_CODES.NAME_TOO_LONG, 400);
+  }
+  if (name_en && name_en.length > 50) {
+    throw buildError('카테고리 이름은 50자를 초과할 수 없습니다.', ERROR_CODES.NAME_TOO_LONG, 400);
+  }
+  if (name_zh && name_zh.length > 50) {
     throw buildError('카테고리 이름은 50자를 초과할 수 없습니다.', ERROR_CODES.NAME_TOO_LONG, 400);
   }
 
   try {
-    return await categoryRepository.create(userId, name);
+    return await categoryRepository.create(userId, name_ko, name_en, name_zh);
   } catch (err) {
-    // PostgreSQL unique_violation 에러 코드
     if (err.code === '23505') {
       throw buildError('이미 사용 중인 카테고리 이름입니다.', ERROR_CODES.DUPLICATE_CATEGORY_NAME, 409);
     }
