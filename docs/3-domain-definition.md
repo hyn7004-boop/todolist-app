@@ -65,7 +65,9 @@
 |--------|------|------|------|
 | category_id | UUID | PK, Not Null | 카테고리 고유 식별자 |
 | user_id | UUID | FK → User.user_id, Not Null | 카테고리 소유 사용자 |
-| name | String | Not Null, max 50자, Unique within user | 카테고리 이름 |
+| name_ko | String | Not Null, max 50자, Unique within user | 카테고리 이름 (한국어, 필수) |
+| name_en | String | Nullable, max 50자 | 카테고리 이름 (영어, 선택) |
+| name_zh | String | Nullable, max 50자 | 카테고리 이름 (중국어, 선택) |
 | is_default | Boolean | Not Null | 기본 카테고리 여부 (true: 삭제·수정 불가) |
 | created_at | DateTime | Not Null | 카테고리 생성 일시 |
 
@@ -349,8 +351,9 @@ User (1) ──────────── (N) Category
 | 인증(Authentication) | 사용자가 이메일과 비밀번호로 신원을 증명하는 과정 |
 | 인가(Authorization) | 인증된 사용자가 특정 리소스에 접근할 권한이 있는지 확인하는 과정 |
 | 소프트 삭제(Soft Delete) | 데이터를 물리적으로 삭제하지 않고 상태값(status=withdrawn)을 변경하여 비활성화하는 방식 |
-| 기본 카테고리 | 회원가입 시 자동 생성되는 카테고리(일반·업무·개인); 삭제·수정 불가 |
-| 사용자 정의 카테고리 | 사용자가 직접 추가한 카테고리(is_default=false); 연결된 할일이 없으면 삭제 가능 |
+| 기본 카테고리 | 회원가입 시 자동 생성되는 카테고리(일반·업무·개인); 삭제·수정 불가; 한국어/영어/중국어 이름이 사전 정의되어 있음 |
+| 사용자 정의 카테고리 | 사용자가 직접 추가한 카테고리(is_default=false); 연결된 할일이 없으면 삭제 가능; 최소 한국어 이름 필수 |
+| 다국어(i18n) | 앱 UI를 한국어·영어·중국어 3개 언어로 표시하는 기능. 카테고리 이름은 언어별로 DB에 저장(name_ko/name_en/name_zh)하여 현재 선택 언어로 표시한다 |
 | 완료 토글 | 할일의 is_completed 값을 true↔false로 전환하는 동작 |
 | KST | Korea Standard Time (UTC+9); 날짜 기준이 되는 시간대 |
 | bcrypt | 비밀번호 해시에 사용하는 단방향 암호화 알고리즘 |

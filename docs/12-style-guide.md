@@ -163,6 +163,42 @@ export function useTheme() {
 
 ---
 
+## 3.6 다국어(i18n) UI 가이드
+
+### 지원 언어 및 선택 UI
+
+- **지원 언어**: 한국어(`ko`, 기본), English(`en`), 中文(`zh`)
+- **언어 선택 위치**: 헤더 우측, 다크모드 토글 왼쪽 `<select>` 드롭다운
+- 선택 즉시 전체 UI 언어가 전환된다.
+
+### 카테고리 이름 다국어 처리
+
+카테고리 이름은 DB에 `name_ko / name_en / name_zh` 3개 컬럼으로 저장된다.  
+`getCategoryName(category, currentLanguage)` 유틸로 현재 언어의 이름을 반환하며, 번역이 없으면 `name_ko`로 폴백한다.
+
+| 표시 위치 | 적용 방식 |
+|-----------|-----------|
+| 사이드바 카테고리 목록 | `getCategoryName(cat, currentLanguage)` |
+| 할일 목록 카테고리 뱃지 | `getCategoryName(foundCategory, currentLanguage)` |
+| 할일 필터 드롭다운 | `getCategoryName(cat, currentLanguage)` |
+| 할일 등록/수정 폼 select | `getCategoryName(cat, currentLanguage)` |
+| 카테고리 관리 목록 | `getCategoryName(category, currentLanguage)` (prop으로 전달) |
+
+### 번역 키 구조
+
+```
+src/locales/{ko|en|zh}.json
+└── common.*     공통 버튼 텍스트
+└── auth.*       인증 화면
+└── nav.*        사이드바 내비게이션
+└── todo.*       할일 관련
+└── category.*   카테고리 관련
+└── settings.*   내 정보 화면
+└── language.*   언어 선택 레이블
+```
+
+---
+
 ## 4. 타이포그래피
 
 ### 3.1 폰트 패밀리

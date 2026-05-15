@@ -231,13 +231,17 @@ interface UpdateUserRequest {
 // src/types/category.types.ts
 interface Category {
   category_id: string;
-  name: string;
+  name_ko: string;       // 한국어 이름 (필수)
+  name_en: string | null; // 영어 이름 (선택)
+  name_zh: string | null; // 중국어 이름 (선택)
   is_default: boolean;
   created_at: string;
 }
 
 interface CreateCategoryRequest {
-  name: string;
+  name_ko: string;
+  name_en: string;
+  name_zh: string;
 }
 ```
 
@@ -447,7 +451,7 @@ Header: Authorization: Bearer <token>
 ```typescript
 // src/api/categoryApi.ts
 import apiClient from './client';
-import type { Category } from '../types/category.types';
+import type { Category, CreateCategoryRequest } from '../types/category.types';
 
 export const categoryApi = {
   getCategories: async (): Promise<Category[]> => {
@@ -455,8 +459,8 @@ export const categoryApi = {
     return res.data.data;
   },
 
-  createCategory: async (name: string): Promise<Category> => {
-    const res = await apiClient.post('/categories', { name });
+  createCategory: async (data: CreateCategoryRequest): Promise<Category> => {
+    const res = await apiClient.post('/categories', data);
     return res.data.data;
   },
 
@@ -471,18 +475,19 @@ export const categoryApi = {
 ```
 GET /api/v1/categories
 Header: Authorization: Bearer <token>
-200: { success: true, data: [ { category_id, name, is_default, created_at }, ... ] }
+200: { success: true, data: [ { category_id, name_ko, name_en, name_zh, is_default, created_at }, ... ] }
 ```
 
-> 회원가입 시 자동 생성된 기본 카테고리 3개(일반·업무·개인, `is_default: true`)가 포함된다.
+> 회원가입 시 자동 생성된 기본 카테고리 3개(일반·업무·개인, `is_default: true`)가 포함된다.  
+> 기본 카테고리는 name_en, name_zh에 사전 정의된 번역이 포함된다.
 
 **UC-06 카테고리 추가**
 
 ```
 POST /api/v1/categories
 Header: Authorization: Bearer <token>
-Body: { name }
-201: { success: true, data: { category_id, name, is_default: false, created_at } }
+Body: { name_ko, name_en?, name_zh? }
+201: { success: true, data: { category_id, name_ko, name_en, name_zh, is_default: false, created_at } }
 409: DUPLICATE_CATEGORY_NAME
 400: NAME_TOO_LONG | MISSING_REQUIRED_FIELD
 ```
@@ -645,11 +650,12 @@ export const useCategories = () => {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoryApi } from '../api/categoryApi';
 import { QUERY_KEYS } from '../constants/queryKeys';
+import type { CreateCategoryRequest } from '../types/category.types';
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => categoryApi.createCategory(name),
+    mutationFn: (data: CreateCategoryRequest) => categoryApi.createCategory(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.categories() });
     },
@@ -931,7 +937,60 @@ createTodo.mutate(data, {
 
 ---
 
-## 10. 라우팅 설정
+## 10. 다국어(i18n) 가이드
+
+### 10.1 지원 언어
+
+| 코드 | 언어 | 기본값 |
+|------|------|--------|
+| `ko` | 한국어 | ✅ (기본) |
+| `en` | English | |
+| `zh` | 中文 (간체) | |
+
+언어 설정은 `localStorage`의 `language` 키에 저장된다.
+
+### 10.2 useLanguage 훅
+
+```typescript
+// src/hooks/useLanguage.ts
+import { useTranslation } from 'react-i18next';
+
+export function useLanguage() {
+  const { i18n } = useTranslation();
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+    // <html lang="..."> 속성도 동기화
+  };
+  return { currentLanguage: i18n.language, changeLanguage };
+}
+```
+
+### 10.3 카테고리 이름 표시
+
+카테고리 이름은 현재 언어에 맞는 컬럼을 우선 표시하며, 해당 언어 번역이 없으면 한국어(`name_ko`)로 폴백한다.
+
+```typescript
+// src/utils/categoryUtils.ts
+export function getCategoryName(category: Category, lang: string): string {
+  if (lang === 'en' && category.name_en) return category.name_en;
+  if (lang === 'zh' && category.name_zh) return category.name_zh;
+  return category.name_ko;
+}
+```
+
+### 10.4 번역 파일 위치
+
+```
+src/locales/
+  ko.json   — 한국어 (기본)
+  en.json   — 영어
+  zh.json   — 중국어 (간체)
+```
+
+---
+
+## 11. 라우팅 설정
 
 ```typescript
 // src/App.tsx
@@ -964,7 +1023,7 @@ const router = createBrowserRouter([
 
 ---
 
-## 11. 주요 UX 원칙
+## 12. 주요 UX 원칙
 
 | 기능 | UX 원칙 |
 |------|---------|
@@ -977,7 +1036,7 @@ const router = createBrowserRouter([
 
 ---
 
-## 12. 반응형 브레이크포인트
+## 13. 반응형 브레이크포인트
 
 | 구분 | 화면 너비 | 레이아웃 |
 |------|-----------|---------|
@@ -987,7 +1046,7 @@ const router = createBrowserRouter([
 
 ---
 
-## 13. 개발 체크리스트
+## 14. 개발 체크리스트
 
 프론트엔드 개발 시 아래 항목을 순서대로 완료한다.
 
