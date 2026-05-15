@@ -46,7 +46,7 @@ export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, s
 
   useEffect(() => {
     if (categories.length > 0 && !formData.category_id) {
-      setFormData((prev) => ({ ...prev, category_id: categories[0].category_id }));
+      setFormData((prev) => ({ ...prev, category_id: categories[0]?.category_id ?? '' }));
     }
   }, [categories, formData.category_id]);
 

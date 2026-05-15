@@ -10,10 +10,9 @@ interface DatePickerProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
-  style?: React.CSSProperties;
 }
 
-export function DatePicker({ id, value, onChange, className, style }: DatePickerProps) {
+export function DatePicker({ id, value, onChange, className }: DatePickerProps) {
   const { currentLanguage } = useLanguage();
   const locale = LOCALE_MAP[currentLanguage as keyof typeof LOCALE_MAP] ?? ko;
 
@@ -35,7 +34,6 @@ export function DatePicker({ id, value, onChange, className, style }: DatePicker
       locale={locale}
       dateFormat="yyyy-MM-dd"
       className={className}
-      style={style}
       placeholderText="yyyy-MM-dd"
       autoComplete="off"
     />

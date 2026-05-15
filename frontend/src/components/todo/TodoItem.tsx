@@ -39,7 +39,7 @@ export function TodoItem({ todo, categories, onDelete }: TodoItemProps) {
   }, [todo.is_completed]);
 
   const categoryIndex = categories.findIndex((c) => c.category_id === todo.category_id);
-  const badgeStyle = BADGE_STYLES[categoryIndex % BADGE_STYLES.length] ?? BADGE_STYLES[0];
+  const badgeStyle = BADGE_STYLES[categoryIndex % BADGE_STYLES.length] ?? { bg: '#DBEAFE', color: '#1D4ED8' };
   const foundCategory = categoryIndex >= 0 ? categories[categoryIndex] : null;
   const categoryName = foundCategory ? getCategoryName(foundCategory, currentLanguage) : '';
 
