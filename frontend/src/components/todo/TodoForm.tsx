@@ -27,7 +27,7 @@ export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, s
   const [formData, setFormData] = useState<CreateTodoRequest>({
     title: initialData?.title ?? '',
     category_id: initialData?.category_id ?? '',
-    due_date: initialData?.due_date ?? getTodayKST(),
+    due_date: initialData?.due_date?.slice(0, 10) ?? getTodayKST(),
     description: initialData?.description ?? '',
   });
 
@@ -38,7 +38,7 @@ export function TodoForm({ initialData, onSubmit, isLoading, submitButtonText, s
       setFormData({
         title: initialData.title,
         category_id: initialData.category_id,
-        due_date: initialData.due_date,
+        due_date: initialData.due_date.slice(0, 10),
         description: initialData.description ?? '',
       });
     }
